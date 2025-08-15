@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>kang marah</title>
+<style>
+    body {
+        margin: 0;
+        background: #ffeff5;
+        overflow: hidden;
+        height: 100vh;
+        font-family: sans-serif;
+    }
+
+    canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .balloon {
+        position: absolute;
+        animation: floatUp 6s linear forwards;
+    }
+
+    @keyframes floatUp {
+        0% {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-120vh) scale(1.2);
+            opacity: 0;
+        }
+    }
+</style>
+</head>
+<body>
+<audio id="bgMusic" loop>
+    <source src="cats.mp3" type="audio/mpeg">
+</audio>
+<canvas id="loveCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById('loveCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let t = 0; // Parameter untuk posisi teks
+
+function drawLoveText() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "bold 40px Arial";
+    ctx.fillStyle = "#ff1744";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    const scale = 15;
+    const angle = t;
+    const x = 16 * Math.pow(Math.sin(angle), 3);
+    const y = 13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle);
+
+    const drawX = canvas.width / 2 + x * scale;
+    const drawY = canvas.height / 2 - y * scale;
+
+    ctx.fillText("MARAH MULU AJEEELL", drawX, drawY);
+
+    t += 0.02;
+    if (t > Math.PI * 2) t = 0;
+    requestAnimationFrame(drawLoveText);
+}
+
+// Daftar gambar stiker dan emoji love
+const stickers = [
+    '❤️',
+    '1.png',
+    '2.png',
+    '3.png'
+];
+
+function spawnBalloon() {
+    const balloon = document.createElement('div');
+    balloon.className = 'balloon';
+    balloon.style.left = Math.random() * window.innerWidth + 'px';
+    balloon.style.bottom = '-100px';
+
+    const choice = stickers[Math.floor(Math.random() * stickers.length)];
+    if (choice.endsWith('.png')) {
+        const img = document.createElement('img');
+        img.src = choice;
+        img.style.width = (40 + Math.random() * 30) + 'px';
+        balloon.appendChild(img);
+    } else {
+        balloon.innerHTML = choice;
+        balloon.style.fontSize = (20 + Math.random() * 20) + 'px';
+    }
+
+    document.body.appendChild(balloon);
+    setTimeout(() => balloon.remove(), 6000);
+}
+
+setInterval(spawnBalloon, 500);
+drawLoveText();
+
+// Auto-play musik setelah halaman siap
+window.addEventListener('load', () => {
+    const music = document.getElementById('bgMusic');
+    music.volume = 0.3;
+    music.play().catch(() => {
+        // Jika auto-play diblokir browser, mainkan saat klik pertama
+        document.body.addEventListener('click', () => {
+            music.play();
+        }, { once: true });
+    });
+});
+
+</script>
+
+</body>
+</html>
